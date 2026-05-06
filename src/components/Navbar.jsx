@@ -293,7 +293,7 @@ const Navbar = () => {
             }
           >
             <p className="hover:text-cyan-400">
-              Account
+              Accounts
             </p>
           </Link>
 
