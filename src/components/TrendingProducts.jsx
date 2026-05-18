@@ -1,7 +1,16 @@
-import React from "react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
+import {
+  Swiper,
+  SwiperSlide,
+} from "swiper/react";
+
+import {
+  Autoplay,
+} from "swiper/modules";
 
 import {
   Heart,
@@ -11,86 +20,214 @@ import {
 
 import "swiper/css";
 
-const products = [
-  {
-    id: 1,
-    name: "Smart Watch",
-    price: "₹9,999",
-    rating: "4.8",
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
-  },
-  {
-    id: 2,
-    name: "Wireless Headphone",
-    price: "₹7,499",
-    rating: "4.7",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-  },
-  {
-    id: 3,
-    name: "Gaming Mouse",
-    price: "₹2,999",
-    rating: "4.6",
-    image:
-      "https://images.unsplash.com/photo-1527814050087-3793815479db",
-  },
-  {
-    id: 4,
-    name: "Laptop",
-    price: "₹74,999",
-    rating: "4.9",
-    image:
-      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
-  },
-  {
-    id: 5,
-    name: "Sneakers",
-    price: "₹5,499",
-    rating: "4.5",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-  },
-  {
-    id: 6,
-    name: "Modern Camera",
-    price: "₹29,999",
-    rating: "4.8",
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32",
-  },
-];
-
 const TrendingProducts = () => {
+
+  // PRODUCTS
+  const [products, setProducts] =
+    useState([]);
+
+  // LOAD PRODUCTS
+  useEffect(() => {
+
+    const loadProducts = () => {
+
+      const savedProducts =
+        JSON.parse(
+          localStorage.getItem(
+            "products"
+          )
+        ) || [];
+
+      setProducts(
+        savedProducts
+      );
+    };
+
+    // FIRST LOAD
+    loadProducts();
+
+    // LIVE UPDATE
+    window.addEventListener(
+      "productsUpdated",
+      loadProducts
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "productsUpdated",
+        loadProducts
+      );
+    };
+
+  }, []);
+
+  // ADD TO CART
+  const addToCart = (
+    product
+  ) => {
+
+    const savedCart =
+      JSON.parse(
+        localStorage.getItem(
+          "cart"
+        )
+      ) || [];
+
+    // CHECK DUPLICATE
+    const alreadyExist =
+      savedCart.find(
+        (item) =>
+          item.id === product.id
+      );
+
+    if (alreadyExist) {
+
+      alert(
+        "Already Added To Cart"
+      );
+
+      return;
+    }
+
+    // ADD PRODUCT
+    const updatedCart = [
+      ...savedCart,
+      product,
+    ];
+
+    // SAVE
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(
+        updatedCart
+      )
+    );
+
+    // NAVBAR UPDATE
+    window.dispatchEvent(
+      new Event(
+        "cartUpdated"
+      )
+    );
+
+    alert(
+      "Added To Cart"
+    );
+  };
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#07111f] via-[#0f172a] to-[#111827] text-white py-24">
+    <section
+      className="
+        relative
+        overflow-hidden
+        bg-gradient-to-br
+        from-[#07111f]
+        via-[#0f172a]
+        to-[#111827]
+        text-white
+        py-24
+      "
+    >
 
       {/* Background Glow */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+      <div
+        className="
+          absolute
+          top-0
+          left-0
+          w-72
+          h-72
+          bg-cyan-500/20
+          rounded-full
+          blur-3xl
+          animate-pulse
+        "
+      ></div>
 
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl animate-bounce"></div>
+      <div
+        className="
+          absolute
+          bottom-0
+          right-0
+          w-80
+          h-80
+          bg-orange-500/20
+          rounded-full
+          blur-3xl
+          animate-bounce
+        "
+      ></div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div
+        className="
+          max-w-7xl
+          mx-auto
+          px-6
+          relative
+          z-10
+        "
+      >
 
         {/* Heading */}
         <div className="text-center mb-16">
 
-          <p className="uppercase tracking-[6px] text-cyan-400 font-semibold mb-4">
+          <p
+            className="
+              uppercase
+              tracking-[6px]
+              text-cyan-400
+              font-semibold
+              mb-4
+            "
+          >
             Trending Now
           </p>
 
-          <h2 className="text-5xl md:text-6xl font-extrabold">
+          <h2
+            className="
+              text-5xl
+              md:text-6xl
+              font-extrabold
+            "
+          >
             Best Selling Products
           </h2>
 
-          <p className="text-gray-300 mt-6 text-lg max-w-2xl mx-auto">
-            Explore premium trending products with modern styles
+          <p
+            className="
+              text-gray-300
+              mt-6
+              text-lg
+              max-w-2xl
+              mx-auto
+            "
+          >
+            Explore premium trending
+            products with modern styles
             and amazing discounts.
           </p>
+
         </div>
 
-        {/* Swiper Slider */}
+        {/* EMPTY */}
+        {products.length === 0 && (
+
+          <div className="text-center py-20">
+
+            <h2 className="text-4xl font-bold">
+              No Products Found
+            </h2>
+
+            <p className="text-gray-400 mt-4">
+              Add Products From Admin Panel
+            </p>
+
+          </div>
+
+        )}
+
+        {/* SWIPER */}
         <Swiper
           modules={[Autoplay]}
           spaceBetween={30}
@@ -110,7 +247,10 @@ const TrendingProducts = () => {
         >
 
           {products.map((product) => (
-            <SwiperSlide key={product.id}>
+
+            <SwiperSlide
+              key={product.id}
+            >
 
               <div
                 className="
@@ -127,18 +267,48 @@ const TrendingProducts = () => {
                 "
               >
 
-                {/* Discount Badge */}
-                <div className="absolute top-5 left-5 z-20 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+                {/* Badge */}
+                <div
+                  className="
+                    absolute
+                    top-5
+                    left-5
+                    z-20
+                    bg-orange-500
+                    text-white
+                    px-4
+                    py-1
+                    rounded-full
+                    text-sm
+                    font-bold
+                  "
+                >
                   20% OFF
                 </div>
 
                 {/* Wishlist */}
-                <button className="absolute top-5 right-5 z-20 bg-white/10 backdrop-blur-lg p-3 rounded-full hover:bg-pink-500 transition duration-300">
+                <button
+                  className="
+                    absolute
+                    top-5
+                    right-5
+                    z-20
+                    bg-white/10
+                    backdrop-blur-lg
+                    p-3
+                    rounded-full
+                    hover:bg-pink-500
+                    transition
+                  "
+                >
+
                   <Heart size={20} />
+
                 </button>
 
-                {/* Product Image */}
+                {/* IMAGE */}
                 <div className="overflow-hidden">
+
                   <img
                     src={product.image}
                     alt={product.name}
@@ -151,31 +321,69 @@ const TrendingProducts = () => {
                       duration-700
                     "
                   />
+
                 </div>
 
-                {/* Product Details */}
+                {/* DETAILS */}
                 <div className="p-6">
 
                   {/* Rating */}
-                  <div className="flex items-center gap-2 text-yellow-400 mb-3">
-                    <Star size={18} fill="yellow" />
-                    <span>{product.rating}</span>
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                      text-yellow-400
+                      mb-3
+                    "
+                  >
+
+                    <Star
+                      size={18}
+                      fill="yellow"
+                    />
+
+                    <span>4.8</span>
+
                   </div>
 
-                  {/* Product Name */}
-                  <h3 className="text-2xl font-bold">
+                  {/* NAME */}
+                  <h3
+                    className="
+                      text-2xl
+                      font-bold
+                    "
+                  >
                     {product.name}
                   </h3>
 
-                  {/* Price */}
-                  <p className="text-cyan-400 text-2xl font-bold mt-3">
+                  {/* CATEGORY */}
+                  <p className="text-gray-400 mt-2">
+                    {product.category}
+                  </p>
+
+                  {/* PRICE */}
+                  <p
+                    className="
+                      text-cyan-400
+                      text-2xl
+                      font-bold
+                      mt-3
+                    "
+                  >
                     {product.price}
                   </p>
 
-                  {/* Buttons */}
-                  <div className="flex gap-4 mt-6">
+                  {/* BUTTONS */}
+                  <div
+                    className="
+                      flex
+                      gap-4
+                      mt-6
+                    "
+                  >
 
-                    {/* Buy Now */}
+                    {/* BUY */}
                     <button
                       className="
                         flex-1
@@ -195,8 +403,13 @@ const TrendingProducts = () => {
                       Buy Now
                     </button>
 
-                    {/* Cart */}
+                    {/* CART */}
                     <button
+                      onClick={() =>
+                        addToCart(
+                          product
+                        )
+                      }
                       className="
                         w-14
                         flex
@@ -210,15 +423,26 @@ const TrendingProducts = () => {
                         duration-500
                       "
                     >
-                      <ShoppingCart size={22} />
+
+                      <ShoppingCart
+                        size={22}
+                      />
+
                     </button>
+
                   </div>
+
                 </div>
+
               </div>
+
             </SwiperSlide>
           ))}
+
         </Swiper>
+
       </div>
+
     </section>
   );
 };

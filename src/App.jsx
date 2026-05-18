@@ -9,57 +9,135 @@ import {
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
+// Pages
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import CategoriesPage from "./pages/CategoriesPage";
+
+import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
+import AddProducts from "./pages/AddProducts";
+
 import Cart from "./pages/Cart";
-import Account from "./pages/Account";
+
+// Admin Pages
+import Orders from "./pages/Orders";
+import Users from "./pages/Users";
+import Payments from "./pages/Payments";
+import Coupons from "./pages/Coupons";
+import Reviews from "./pages/Reviews";
+import Settings from "./pages/Settings";
 
 const App = () => {
 
   return (
     <BrowserRouter>
 
-      {/* Navbar */}
-      <Navbar />
-
-      {/* Routes */}
       <Routes>
 
-        {/* Home */}
+        {/* HOME */}
         <Route
           path="/"
-          element={<Home />}
+          element={
+            <>
+              <Navbar />
+              <Home />
+              <Footer />
+            </>
+          }
         />
 
-        {/* Products */}
+        {/* PRODUCTS */}
         <Route
           path="/products"
-          element={<Products />}
+          element={
+            <>
+              <Navbar />
+              <Products />
+              <Footer />
+            </>
+          }
         />
 
-        {/* Categories */}
+        {/* CATEGORIES */}
         <Route
           path="/categories"
-          element={<CategoriesPage />}
+          element={
+            <>
+              <Navbar />
+              <CategoriesPage />
+              <Footer />
+            </>
+          }
         />
 
-        {/* Cart */}
+        {/* CART */}
         <Route
           path="/cart"
-          element={<Cart />}
+          element={
+            <>
+              <Navbar />
+              <Cart />
+              <Footer />
+            </>
+          }
         />
 
-        {/* Login */}
+        {/* ADMIN LOGIN */}
         <Route
-          path="/login"
-          element={<Account />}
+          path="/admin-login"
+          element={<AdminLogin />}
+        />
+
+        {/* DASHBOARD */}
+        <Route
+          path="/dashboard"
+          element={<Admin />}
+        />
+
+        {/* ADD PRODUCTS */}
+        <Route
+          path="/admin-products"
+          element={<AddProducts />}
+        />
+
+        {/* ORDERS */}
+        <Route
+          path="/orders"
+          element={<Orders />}
+        />
+
+        {/* USERS */}
+        <Route
+          path="/users"
+          element={<Users />}
+        />
+
+        {/* PAYMENTS */}
+        <Route
+          path="/payments"
+          element={<Payments />}
+        />
+
+        {/* COUPONS */}
+        <Route
+          path="/coupons"
+          element={<Coupons />}
+        />
+
+        {/* REVIEWS */}
+        <Route
+          path="/reviews"
+          element={<Reviews />}
+        />
+
+        {/* SETTINGS */}
+        <Route
+          path="/settings"
+          element={<Settings />}
         />
 
       </Routes>
-
-      {/* Footer */}
-      <Footer />
 
     </BrowserRouter>
   );

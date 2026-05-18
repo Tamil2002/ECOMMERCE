@@ -1,32 +1,91 @@
-import React, { useState } from "react";
-
-import {
-  Search,
-  ShoppingCart,
-  Menu,
-  X,
-  User,
-} from "lucide-react";
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   Link,
   useNavigate,
 } from "react-router-dom";
 
+import {
+  ShoppingCart,
+  Search,
+  Shield,
+} from "lucide-react";
+
 const Navbar = () => {
 
-  const [openMenu, setOpenMenu] =
-    useState(false);
+  const navigate =
+    useNavigate();
 
+  // Search
   const [search, setSearch] =
     useState("");
 
-  const navigate = useNavigate();
+  // Cart
+  const [cart, setCart] =
+    useState([]);
+
+  // Load Cart
+  useEffect(() => {
+
+    const loadCart = () => {
+
+      const savedCart =
+        JSON.parse(
+          localStorage.getItem(
+            "cart"
+          )
+        ) || [];
+
+      setCart(savedCart);
+    };
+
+    // First Load
+    loadCart();
+
+    // Realtime Update
+    const handleStorage = () => {
+
+      loadCart();
+    };
+
+    // Multi Tab
+    window.addEventListener(
+      "storage",
+      handleStorage
+    );
+
+    // Same Tab
+    window.addEventListener(
+      "cartUpdated",
+      handleStorage
+    );
+
+    return () => {
+
+      window.removeEventListener(
+        "storage",
+        handleStorage
+      );
+
+      window.removeEventListener(
+        "cartUpdated",
+        handleStorage
+      );
+    };
+
+  }, []);
 
   // Search Product
-  const handleSearch = (e) => {
+  const handleSearch = (
+    e
+  ) => {
 
-    if (e.key === "Enter") {
+    if (
+      e.key === "Enter"
+    ) {
 
       navigate(
         `/products?search=${search}`
@@ -37,278 +96,150 @@ const Navbar = () => {
   return (
     <nav
       className="
-        sticky
-        top-0
-        z-50
-        bg-gradient-to-r
-        from-indigo-600
-        via-purple-600
-        to-pink-500
-        shadow-lg
+        bg-[#020617]
+        text-white
+        px-8
+        py-5
+        flex
+        items-center
+        justify-between
+        border-b
+        border-white/10
       "
     >
 
+      {/* Logo */}
+      <Link
+        to="/"
+        className="
+          text-3xl
+          font-extrabold
+          text-cyan-400
+        "
+      >
+        E-Commerce
+      </Link>
+
+      {/* Search */}
       <div
         className="
-          max-w-7xl
-          mx-auto
-          px-4
-          sm:px-6
-          py-4
           flex
           items-center
-          justify-between
+          bg-[#111827]
+          px-4
+          py-3
+          rounded-2xl
+          w-[400px]
+          gap-3
         "
       >
 
-        {/* Logo */}
-        <Link to="/">
+        <Search size={20} />
 
-          <h1
-            className="
-              text-3xl
-              sm:text-5xl
-              font-extrabold
-              text-white
-              tracking-wide
-            "
-          >
-            ShopKart
-          </h1>
-        </Link>
-
-        {/* Desktop Menu */}
-        <ul
+        <input
+          type="text"
+          placeholder="Search Products"
+          value={search}
+          onChange={(e) =>
+            setSearch(
+              e.target.value
+            )
+          }
+          onKeyDown={handleSearch}
           className="
-            hidden
-            lg:flex
-            items-center
-            gap-10
-            text-white
-            font-semibold
-            text-lg
+            bg-transparent
+            outline-none
+            w-full
           "
-        >
+        />
 
-          <Link to="/">
-            <li className="hover:text-cyan-200">
-              Home
-            </li>
-          </Link>
-
-          <Link to="/categories">
-            <li className="hover:text-cyan-200">
-              Categories
-            </li>
-          </Link>
-
-          <Link to="/products">
-            <li className="hover:text-cyan-200">
-              Products
-            </li>
-          </Link>
-        </ul>
-
-        {/* Right */}
-        <div className="flex items-center gap-3 sm:gap-5">
-
-          {/* Search */}
-          <div
-            className="
-              hidden
-              md:flex
-              items-center
-              bg-white/20
-              px-4
-              py-2
-              rounded-full
-              backdrop-blur-xl
-              w-60
-            "
-          >
-
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-              onKeyDown={handleSearch}
-              className="
-                bg-transparent
-                outline-none
-                text-white
-                placeholder:text-white/70
-                w-full
-                text-sm
-              "
-            />
-
-            <Search
-              size={18}
-              className="text-white"
-            />
-          </div>
-
-          {/* Account */}
-          <Link to="/login">
-
-            <button
-              className="
-                text-white
-                hover:text-cyan-200
-                transition-all
-              "
-            >
-              <User
-                size={24}
-                className="sm:w-7 sm:h-7"
-              />
-            </button>
-          </Link>
-
-          {/* Cart */}
-          <Link to="/cart">
-
-            <button
-              className="
-                text-white
-                hover:text-cyan-200
-                transition-all
-              "
-            >
-              <ShoppingCart
-                size={24}
-                className="sm:w-7 sm:h-7"
-              />
-            </button>
-          </Link>
-
-          {/* Mobile Menu */}
-          <button
-            onClick={() =>
-              setOpenMenu(!openMenu)
-            }
-            className="
-              lg:hidden
-              text-white
-            "
-          >
-
-            {openMenu ? (
-              <X size={30} />
-            ) : (
-              <Menu size={30} />
-            )}
-          </button>
-        </div>
       </div>
 
-      {/* Mobile Menu */}
-      {openMenu && (
+      {/* Links */}
+      <div className="flex items-center gap-8">
 
-        <div
+        <Link
+          to="/"
+          className="hover:text-cyan-400"
+        >
+          Home
+        </Link>
+
+        <Link
+          to="/products"
+          className="hover:text-cyan-400"
+        >
+          Products
+        </Link>
+
+        <Link
+          to="/categories"
+          className="hover:text-cyan-400"
+        >
+          Categories
+        </Link>
+
+        {/* Admin */}
+        <Link
+          to="/dashboard"
           className="
-            lg:hidden
-            bg-[#111827]
-            text-white
-            px-6
-            py-6
-            space-y-5
-            text-lg
-            font-semibold
+            flex
+            items-center
+            gap-2
+            hover:text-cyan-400
           "
         >
 
-          {/* Mobile Search */}
-          <div
-            className="
-              flex
-              items-center
-              bg-white/10
-              px-4
-              py-3
-              rounded-2xl
-            "
-          >
+          <Shield size={20} />
 
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-              onKeyDown={handleSearch}
+          Admin
+
+        </Link>
+
+        {/* Cart */}
+        <button
+          onClick={() =>
+            navigate("/cart")
+          }
+          className="
+            relative
+            bg-cyan-500
+            text-black
+            p-3
+            rounded-full
+          "
+        >
+
+          <ShoppingCart size={24} />
+
+          {/* Cart Count */}
+          {cart.length > 0 && (
+
+            <span
               className="
-                bg-transparent
-                outline-none
+                absolute
+                -top-2
+                -right-2
+                bg-red-500
                 text-white
-                placeholder:text-gray-300
-                flex-1
+                w-6
+                h-6
+                rounded-full
+                flex
+                items-center
+                justify-center
+                text-sm
+                font-bold
               "
-            />
+            >
+              {cart.length}
+            </span>
+          )}
 
-            <Search size={18} />
-          </div>
+        </button>
 
-          <Link
-            to="/"
-            onClick={() =>
-              setOpenMenu(false)
-            }
-          >
-            <p className="hover:text-cyan-400">
-              Home
-            </p>
-          </Link>
+      </div>
 
-          <Link
-            to="/categories"
-            onClick={() =>
-              setOpenMenu(false)
-            }
-          >
-            <p className="hover:text-cyan-400">
-              Categories
-            </p>
-          </Link>
-
-          <Link
-            to="/products"
-            onClick={() =>
-              setOpenMenu(false)
-            }
-          >
-            <p className="hover:text-cyan-400">
-              Products
-            </p>
-          </Link>
-
-          <Link
-            to="/login"
-            onClick={() =>
-              setOpenMenu(false)
-            }
-          >
-            <p className="hover:text-cyan-400">
-              Accounts
-            </p>
-          </Link>
-
-          <Link
-            to="/cart"
-            onClick={() =>
-              setOpenMenu(false)
-            }
-          >
-            <p className="hover:text-cyan-400">
-              Cart
-            </p>
-          </Link>
-        </div>
-      )}
     </nav>
   );
 };
